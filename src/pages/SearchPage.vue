@@ -20,30 +20,12 @@
                                 clearable
                             />
                         </v-col>
-                        <v-col cols="12" sm="12" md="6" lg="4">
-                            <v-range-slider
-                                v-model="range"
-                                :max="2030"
-                                :min="1950"
-                                :step="10"
-                                class="mx-4"
-                                hide-details
-                            >
-                                <template v-slot:prepend>
-                                    <v-label>{{ range[0] }}</v-label>
-                                </template>
-                                <template v-slot:append>
-                                    <v-label>{{ range[1] }}</v-label>
-                                </template>
-                            </v-range-slider>
-                        </v-col>
-
                         <v-col
                             cols="12"
                             sm="12"
                             md="6"
-                            lg="4"
-                            class="d-block d-sm-flex"
+                            lg="3"
+                            class="justify-center"
                         >
                             <v-radio-group
                                 v-model="searchType"
@@ -54,14 +36,47 @@
                                 <v-radio label="Movies" value="movies" />
                                 <v-radio label="TV Series" value="series" />
                             </v-radio-group>
-                            <v-btn
-                                class="text-none"
-                                variant="outlined"
-                                color="info"
-                                prepend-icon="mdi-magnify"
+                        </v-col>
+
+                        <v-col cols="12" sm="12" md="6" lg="5">
+                            <div
+                                class="d-block d-sm-flex justify-space-between align-center"
                             >
-                                Search
-                            </v-btn>
+                                <div
+                                    class="d-block d-sm-flex flex-grow-1 align-center"
+                                >
+                                    <v-checkbox
+                                        color="info"
+                                        v-model="isYear"
+                                        :label="isYear ? 'Year : ' : 'Year'"
+                                        hide-details
+                                    ></v-checkbox>
+                                    <v-range-slider
+                                        v-if="isYear"
+                                        v-model="range"
+                                        :max="2030"
+                                        :min="1950"
+                                        :step="10"
+                                        hide-details
+                                    >
+                                        <template v-slot:prepend>
+                                            <v-label>{{ range[0] }}</v-label>
+                                        </template>
+                                        <template v-slot:append>
+                                            <v-label>{{ range[1] }}</v-label>
+                                        </template>
+                                    </v-range-slider>
+                                </div>
+
+                                <v-btn
+                                    class="text-none mt-5 mt-sm-0 ml-sm-4 ml-0"
+                                    variant="outlined"
+                                    color="info"
+                                    prepend-icon="mdi-magnify"
+                                >
+                                    Search
+                                </v-btn>
+                            </div>
                         </v-col>
                     </v-row>
                 </v-card>
@@ -93,6 +108,7 @@ import { ref } from "vue";
 
 const searchType = ref("any");
 const range = ref([2000, 2024]);
+const isYear = ref(false);
 </script>
 
 <style lang="scss" scoped></style>

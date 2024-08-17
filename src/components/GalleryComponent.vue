@@ -1,26 +1,29 @@
 <template>
-    <v-row justify="center">
+    <v-row justify="center" align="end">
         <v-col cols="12" class="text-center">
             <h1>{{ title }}</h1>
         </v-col>
-        <v-col v-for="n in 4" :key="n" xs="6" sm="3" md="2">
+        <v-col
+            v-for="movie in movieList"
+            :key="movie.imdbID"
+            cols="12"
+            xs="6"
+            sm="3"
+            md="2"
+        >
             <v-card
                 class="mx-auto my-12"
                 rounded="lg"
                 hover
                 @click="showItemDetails()"
             >
-                <v-img
-                    :lazy-src="`https://picsum.photos/10/6?image=${n * 5 + 10}`"
-                    :src="`https://picsum.photos/200/300?image=${n * 5 + 10}`"
-                    cover
-                ></v-img>
+                <v-img :src="movie.Poster" cover></v-img>
 
                 <v-card-item>
-                    <v-card-title>Spider Man</v-card-title>
+                    <v-card-title>{{ movie.Title }}</v-card-title>
 
                     <v-card-subtitle>
-                        <span class="me-1">2024</span>
+                        <span class="me-1">{{ movie.Year }}</span>
                     </v-card-subtitle>
                 </v-card-item>
             </v-card>
@@ -47,12 +50,23 @@
 <script setup>
 import { ref } from "vue";
 
-const { title, gallery } = defineProps(["title", "gallery"]);
+import { defineProps } from "vue";
+
+const props = defineProps({
+    title: {
+        type: String,
+        required: true,
+    },
+    movieList: {
+        type: Array,
+        required: true,
+    },
+});
+
 let showItemDetailsDialog = ref(false);
 
 const showItemDetails = () => {
     showItemDetailsDialog.value = true;
-    console.log("showItemDetails", showItemDetailsDialog);
 };
 
 const hideItemDetails = () => {
