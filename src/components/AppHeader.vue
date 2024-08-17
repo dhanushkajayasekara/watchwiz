@@ -1,5 +1,30 @@
 <template>
-    <v-app-bar color="surface" dark height="auto">
+    <v-app-bar color="surface" dark height="80" class="pe-3">
+        <v-toolbar color="surface">
+            <v-toolbar-title>
+                <v-img
+                    src="@/assets/logo.png"
+                    alt="Logo"
+                    contain
+                    height="50"
+                    width="auto"
+                    @click="() => router.push('/')"
+                    class="cursor-pointer"
+                />
+            </v-toolbar-title>
+
+            <v-spacer></v-spacer>
+
+            <v-btn icon @click="() => router.push('/search')">
+                <v-icon>mdi-magnify</v-icon>
+            </v-btn>
+
+            <v-btn icon>
+                <v-icon color="success">mdi-bookmark</v-icon>
+            </v-btn>
+        </v-toolbar>
+    </v-app-bar>
+    <!-- <v-app-bar color="surface" dark height="auto">
         <v-container>
             <v-row justify="space-between" align="center">
                 <v-col cols="12" xs="12" sm="4" md="2">
@@ -51,7 +76,7 @@
                 </v-col>
             </v-row>
         </v-container>
-    </v-app-bar>
+    </v-app-bar> -->
 </template>
 
 <script setup>
