@@ -1,5 +1,6 @@
 <template>
     <v-container>
+        <!-- Search Card -->
         <v-row>
             <v-col cols="12" md="12">
                 <v-card
@@ -18,6 +19,8 @@
                                 dense
                                 rounded="pill"
                                 clearable
+                                @click:clear="() => (inputTitle = null)"
+                                v-model="inputTitle"
                             />
                         </v-col>
                         <v-col
@@ -28,12 +31,12 @@
                             class="justify-center"
                         >
                             <v-radio-group
-                                v-model="searchType"
                                 inline
                                 hide-details
+                                v-model="inputSearchType"
                             >
-                                <v-radio label="Any" value="any" />
-                                <v-radio label="Movies" value="movies" />
+                                <v-radio label="Any" value="" />
+                                <v-radio label="Movies" value="movie" />
                                 <v-radio label="TV Series" value="series" />
                             </v-radio-group>
                         </v-col>
@@ -47,23 +50,27 @@
                                 >
                                     <v-checkbox
                                         color="info"
-                                        v-model="isYear"
                                         :label="isYear ? 'Year : ' : 'Year'"
                                         hide-details
+                                        v-model="isYear"
                                     ></v-checkbox>
                                     <v-range-slider
                                         v-if="isYear"
-                                        v-model="range"
+                                        v-model="inputYearRange"
                                         :max="2030"
                                         :min="1950"
                                         :step="10"
                                         hide-details
                                     >
                                         <template v-slot:prepend>
-                                            <v-label>{{ range[0] }}</v-label>
+                                            <v-label>
+                                                {{ inputYearRange[0] }}
+                                            </v-label>
                                         </template>
                                         <template v-slot:append>
-                                            <v-label>{{ range[1] }}</v-label>
+                                            <v-label>
+                                                {{ inputYearRange[1] }}
+                                            </v-label>
                                         </template>
                                     </v-range-slider>
                                 </div>
@@ -73,6 +80,10 @@
                                     variant="outlined"
                                     color="info"
                                     prepend-icon="mdi-magnify"
+                                    @click="searchMovies()"
+                                    :disabled="
+                                        !(inputTitle && inputTitle.length >= 3)
+                                    "
                                 >
                                     Search
                                 </v-btn>
@@ -84,9 +95,14 @@
         </v-row>
 
         <v-row>
-            <v-col cols="12"> 4 results found. </v-col>
+            <v-col cols="12">
+                <results-count
+                    :currentCount="movieStore.searchedMovies.length"
+                    :totalCount="movieStore.searchedMoviesCount"
+                />
+            </v-col>
         </v-row>
-        <v-row>
+        <v-row v-if="movieStore.searchedMovies.length">
             <v-col
                 cols="3"
                 sm="3"
@@ -94,7 +110,39 @@
                 lg="5"
                 class="col-content border-e-lg pr-6"
             >
-                <searched-items />
+                <v-row>
+                    <v-col
+                        cols="12"
+                        style="max-height: 500px; overflow-y: auto"
+                    >
+                        <searched-items
+                            :movie-list="movieStore.searchedMovies"
+                        />
+                    </v-col>
+                    <v-col
+                        cols="12"
+                        class="d-flex flex-column"
+                        v-if="movieStore.searchedMoviesCount"
+                    >
+                        <v-btn
+                            v-if="
+                                movieStore.searchedMoviesCount !=
+                                movieStore.searchedMovies.length
+                            "
+                            variant="tonal"
+                            @click="() => loadMoreMovies()"
+                            class="mt-4"
+                        >
+                            More
+                        </v-btn>
+
+                        <results-count
+                            class="mt-4"
+                            :currentCount="movieStore.searchedMovies.length"
+                            :totalCount="movieStore.searchedMoviesCount"
+                        />
+                    </v-col>
+                </v-row>
             </v-col>
             <v-col cols="8" sm="9" md="8" lg="7" class="col-content pl-6">
                 <searched-item-details />
@@ -105,10 +153,51 @@
 
 <script setup>
 import { ref } from "vue";
+import { useMovieStore } from "@/stores/movieStore";
 
-const searchType = ref("any");
-const range = ref([2000, 2024]);
+const inputTitle = ref("");
+const inputSearchType = ref("");
+const inputYearRange = ref([2020, 2030]);
 const isYear = ref(false);
+const movieStore = useMovieStore();
+let currentPage = ref(1);
+
+const searchMovies = (loadMore = false) => {
+    if (!loadMore) {
+        currentPage.value = 1;
+        movieStore.movieDetails = {};
+    }
+
+    if (isYear.value) {
+        movieStore.searchMoviesByYear(
+            currentPage.value,
+            inputTitle.value,
+            inputSearchType.value,
+            inputYearRange.value[0],
+            inputYearRange.value[1]
+        );
+    } else {
+        movieStore.searchMovies(
+            currentPage.value,
+            inputTitle.value,
+            inputSearchType.value
+        );
+    }
+};
+
+const loadMoreMovies = () => {
+    currentPage.value++;
+
+    if (isYear.value) {
+        movieStore.updateMoviesForPage(currentPage.value);
+    } else {
+        searchMovies(true);
+    }
+};
+
+onMounted(() => {
+    movieStore.movieDetails = {};
+});
 </script>
 
 <style lang="scss" scoped></style>
