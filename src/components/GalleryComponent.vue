@@ -15,7 +15,7 @@
                 class="mx-auto my-12"
                 rounded="lg"
                 hover
-                @click="showItemDetails()"
+                @click="fetchDetails(movie.imdbID)"
             >
                 <v-img :src="movie.Poster" cover></v-img>
 
@@ -49,8 +49,8 @@
 
 <script setup>
 import { ref } from "vue";
-
-import { defineProps } from "vue";
+import { useMovieStore } from "@/stores/movieStore";
+const movieStore = useMovieStore();
 
 const props = defineProps({
     title: {
@@ -65,7 +65,9 @@ const props = defineProps({
 
 let showItemDetailsDialog = ref(false);
 
-const showItemDetails = () => {
+const fetchDetails = (imdb) => {
+    movieStore.fetchMovieDetails(imdb);
+
     showItemDetailsDialog.value = true;
 };
 

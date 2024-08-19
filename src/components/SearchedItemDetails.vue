@@ -2,9 +2,8 @@
     <v-row>
         <v-col cols="12" sm="4" class="d-flex align-stretch">
             <v-img
-                :src="`https://picsum.photos/200/300?image=65`"
+                :src="movieStore.movieDetails.Poster"
                 rounded="lg"
-                cover
                 max-height="400"
             ></v-img>
         </v-col>
@@ -24,26 +23,28 @@
                     </v-btn>
                 </v-col>
                 <v-col cols="12">
-                    <h1>A Quiet Place</h1>
+                    <h1>{{ movieStore.movieDetails.Title }}</h1>
                 </v-col>
                 <v-col cols="12">
-                    <v-chip color="default" size="small"> 90 min </v-chip>
-                    <v-chip class="mx-2" color="success" size="small">
-                        2018
+                    <v-chip color="default" size="small">
+                        {{ movieStore.movieDetails.Runtime }}
                     </v-chip>
-                    Drama, Horror, Sci-Fi
+                    <v-chip class="mx-2" color="success" size="small">
+                        {{ movieStore.movieDetails.Year }}
+                    </v-chip>
+                    {{ movieStore.movieDetails.Genre }}
                 </v-col>
                 <v-col cols="12">
                     <v-chip color="info" size="small"> Directed By </v-chip>
-                    John Krasinski
+                    {{ movieStore.movieDetails.Director }}
                 </v-col>
                 <v-col cols="12">
                     <v-chip color="info" size="small"> Written By </v-chip>
-                    Bryan Woods, Scott Beck, John Krasinski
+                    {{ movieStore.movieDetails.Writer }}
                 </v-col>
                 <v-col cols="12">
                     <v-chip color="info" size="small"> Actors </v-chip>
-                    Emily Blunt, John Krasinski, Millicent Simmonds
+                    {{ movieStore.movieDetails.Actors }}
                 </v-col>
             </v-row>
         </v-col>
@@ -52,54 +53,24 @@
     <v-row>
         <v-col cols="12">
             <p>
-                In a devastated Earth overrun by invincible predators of a
-                possible extraterrestrial origin, the Abbotts find themselves
-                struggling to survive in the isolation of upstate New York,
-                defined by a new era of utter silence. Indeed, as this new type
-                of invader is attracted to noise, even the slightest of sounds
-                can be deadly; however, it's been already twelve months since
-                the powerful monsters' first sightings, and this resilient
-                family still stands strong. Of course, learning the rules of
-                survival in this muted dystopia is essential; nevertheless, now,
-                of all times, an otherwise joyous event puts in jeopardy the
-                already fragile stability. And now, more than ever, the Abbotts
-                must not make a sound.
+                {{ movieStore.movieDetails.Plot }}
             </p>
         </v-col>
     </v-row>
     <hr class="my-3" />
     <v-row>
-        <v-col cols="12" sm="4">
+        <v-col
+            cols="12"
+            sm="4"
+            v-for="rating in movieStore.movieDetails.Ratings"
+            :key="rating.Source"
+        >
             <v-card
                 variant="outlined"
                 class="mx-auto"
                 color="success"
-                subtitle="IMDB Rating"
-                title="7.5/10"
-                hover
-                rounded="lg"
-            >
-            </v-card>
-        </v-col>
-        <v-col cols="12" sm="4">
-            <v-card
-                variant="outlined"
-                class="mx-auto"
-                color="error"
-                subtitle="Rotten Tomatoes"
-                title="96%"
-                hover
-                rounded="lg"
-            >
-            </v-card>
-        </v-col>
-        <v-col cols="12" sm="4">
-            <v-card
-                variant="outlined"
-                class="mx-auto"
-                color="error"
-                subtitle="Metacritic"
-                title="82/100"
+                :subtitle="rating.Source"
+                :title="rating.Value"
                 hover
                 rounded="lg"
             >
@@ -110,6 +81,8 @@
 
 <script setup>
 import { ref } from "vue";
+import { useMovieStore } from "@/stores/movieStore";
+const movieStore = useMovieStore();
 
 const interested = ref(false);
 </script>

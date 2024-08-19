@@ -1,17 +1,31 @@
 <template>
     <v-app>
         <app-header />
-        <v-alert
-            rounded="lg"
-            class="ma-16 pa-6"
-            :text="movieStore.error"
-            title="Oops"
-            type="error"
-            v-if="movieStore.error"
-            variant="tonal"
-            border="start"
-            closable
-        ></v-alert>
+        <v-container>
+            <v-alert
+                rounded="lg"
+                class="mt-16 py-6"
+                :text="movieStore.error"
+                title="Oops"
+                type="error"
+                v-if="movieStore.error"
+                variant="tonal"
+                border="start"
+                closable
+            ></v-alert>
+            <v-alert
+                rounded="lg"
+                class="mt-16 py-6"
+                :text="movieStore.errorInfo"
+                title="Oops"
+                type="warning"
+                v-if="movieStore.errorInfo"
+                variant="tonal"
+                border="start"
+                closable
+            ></v-alert>
+        </v-container>
+
         <v-main>
             <router-view />
         </v-main>
