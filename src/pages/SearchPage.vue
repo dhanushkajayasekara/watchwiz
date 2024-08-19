@@ -197,6 +197,7 @@ const loadMoreMovies = () => {
 
 onMounted(() => {
     movieStore.movieDetails = {};
+    movieStore.searchedMoviesCount = 0;
 });
 </script>
 

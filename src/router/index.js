@@ -23,6 +23,11 @@ const routes = [
         name: "search",
         component: () => import("@/pages/SearchPage.vue"),
     },
+    {
+        path: "/interested-movies",
+        name: "interested-movies",
+        component: () => import("@/pages/InterestedMoviesPage.vue"),
+    },
     // Catch-all route for 404 Not Found
     {
         path: "/:pathMatch(.*)*",
