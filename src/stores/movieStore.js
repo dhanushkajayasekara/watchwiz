@@ -2,6 +2,7 @@
 import axios from "axios";
 import { defineStore } from "pinia";
 import { fetchFromOMDB } from "@/services/apiService";
+import { getInterestList } from "@/services/interestListService";
 
 export const useMovieStore = defineStore("movieStore", {
     state: () => ({
@@ -14,6 +15,8 @@ export const useMovieStore = defineStore("movieStore", {
         errorInfo: null,
         loading: false,
         allMoviesByYear: [],
+        interestedMovies: [],
+        interestedMoviesCount: 0,
     }),
     actions: {
         async handleAsyncOperation(asyncFn) {
@@ -146,6 +149,33 @@ export const useMovieStore = defineStore("movieStore", {
             }
 
             this.selectFirstMovie();
+        },
+        async fetchInterestedMovies() {
+            this.reset();
+            this.interestedMovies = [];
+            this.interestedMoviesCount = 0;
+            let imdbList = getInterestList();
+
+            await this.handleAsyncOperation(async () => {
+                const interestedMoviesPromises = [];
+                imdbList.forEach((imdb) => {
+                    interestedMoviesPromises.push(
+                        fetchFromOMDB({
+                            i: imdb,
+                        })
+                    );
+                });
+
+                const responses = await Promise.all(interestedMoviesPromises);
+
+                responses.forEach((response) => {
+                    if (response.data.Response === "True") {
+                        this.interestedMovies.push(response.data);
+                    }
+                });
+
+                this.searchedMoviesCount = imdbList.length;
+            });
         },
     },
 });

@@ -13,13 +13,15 @@
                     <v-btn
                         class="text-none"
                         :prepend-icon="
-                            interested ? 'mdi-bookmark' : 'mdi-bookmark-outline'
+                            isInterested
+                                ? 'mdi-bookmark'
+                                : 'mdi-bookmark-outline'
                         "
-                        :variant="interested ? 'tonal' : 'outlined'"
-                        :color="interested ? 'success' : 'default'"
-                        @click="() => (interested = !interested)"
+                        :variant="isInterested ? 'tonal' : 'outlined'"
+                        :color="isInterested ? 'success' : 'default'"
+                        @click="toggleInterest"
                     >
-                        {{ !interested ? "Add to " : "" }}Interested
+                        {{ !isInterested ? "Add to " : "" }}Interested
                     </v-btn>
                 </v-col>
                 <v-col cols="12">
@@ -82,9 +84,46 @@
 <script setup>
 import { ref } from "vue";
 import { useMovieStore } from "@/stores/movieStore";
-const movieStore = useMovieStore();
+import {
+    addToInterestList,
+    removeFromInterestList,
+    isMovieInInterestList,
+} from "@/services/interestListService";
 
-const interested = ref(false);
+const movieStore = useMovieStore();
+const isInterested = ref(false);
+
+onMounted(() => {
+    console.log(3333333333333333333);
+
+    setTimeout(() => {
+        isInterested.value = isMovieInInterestList(
+            movieStore.movieDetails.imdbID
+        );
+    }, 200);
+});
+
+watch(
+    () => movieStore.movieDetails,
+    (newCount, oldCount) => {
+        console.log(`movieDetails changed from ${oldCount} to ${newCount}`);
+        isInterested.value = isMovieInInterestList(
+            movieStore.movieDetails.imdbID
+        );
+    }
+);
+
+const toggleInterest = () => {
+    if (isInterested.value) {
+        removeFromInterestList(movieStore.movieDetails.imdbID);
+        movieStore.interestedMovies = movieStore.interestedMovies.filter(
+            (movie) => movie.imdbID !== movieStore.movieDetails.imdbID
+        );
+    } else {
+        addToInterestList(movieStore.movieDetails.imdbID);
+    }
+    isInterested.value = !isInterested.value;
+};
 </script>
 
 <style lang="scss" scoped>
