@@ -2,7 +2,7 @@
 import axios from "axios";
 import { defineStore } from "pinia";
 import { fetchFromOMDB } from "@/services/apiService";
-import { getInterestList } from "@/services/interestListService";
+import { getWatchlist } from "@/services/watchlistService";
 
 export const useMovieStore = defineStore("movieStore", {
     state: () => ({
@@ -15,8 +15,8 @@ export const useMovieStore = defineStore("movieStore", {
         errorInfo: null,
         loading: false,
         allMoviesByYear: [],
-        interestedMovies: [],
-        interestedMoviesCount: 0,
+        watchlistMovies: [],
+        watchlistMoviesCount: 0,
     }),
     actions: {
         async handleAsyncOperation(asyncFn) {
@@ -92,7 +92,6 @@ export const useMovieStore = defineStore("movieStore", {
                             s: title,
                             type: type,
                             y: year,
-                            page: 2,
                         })
                     );
                 }
@@ -150,27 +149,27 @@ export const useMovieStore = defineStore("movieStore", {
 
             this.selectFirstMovie();
         },
-        async fetchInterestedMovies() {
+        async fetchWatchlistMovies() {
             this.reset();
-            this.interestedMovies = [];
-            this.interestedMoviesCount = 0;
-            let imdbList = getInterestList();
+            this.watchlistMovies = [];
+            this.watchlistMoviesCount = 0;
+            let imdbList = getWatchlist();
 
             await this.handleAsyncOperation(async () => {
-                const interestedMoviesPromises = [];
+                const watchlistMoviesPromises = [];
                 imdbList.forEach((imdb) => {
-                    interestedMoviesPromises.push(
+                    watchlistMoviesPromises.push(
                         fetchFromOMDB({
                             i: imdb,
                         })
                     );
                 });
 
-                const responses = await Promise.all(interestedMoviesPromises);
+                const responses = await Promise.all(watchlistMoviesPromises);
 
                 responses.forEach((response) => {
                     if (response.data.Response === "True") {
-                        this.interestedMovies.push(response.data);
+                        this.watchlistMovies.push(response.data);
                     }
                 });
 
