@@ -44,27 +44,17 @@
 
         <v-btn
             icon
-            class="v-btn--bottom-right"
+            class="btn-float"
             @click="movieStore.fetchWatchlistMovies()"
         >
             <v-icon>mdi-refresh</v-icon>
         </v-btn>
 
         <!-- Item Details Dialog -->
-        <v-dialog v-model="showItemDetailsDialog" width="auto" persistent>
-            <v-card class="pa-10" max-width="800" rounded="lg">
-                <searched-item-details />
-                <template v-slot:actions>
-                    <v-btn
-                        class="ms-auto text-none mt-3"
-                        prepend-icon="mdi-close"
-                        variant="outlined"
-                        text="Close"
-                        @click="hideItemDetails()"
-                    ></v-btn>
-                </template>
-            </v-card>
-        </v-dialog>
+        <search-item-details-dialog
+            :show-item-details-dialog="showItemDetailsDialog"
+            @close-dialog="() => (showItemDetailsDialog = false)"
+        />
     </v-container>
 </template>
 
@@ -84,17 +74,13 @@ const fetchDetails = (imdb) => {
     movieStore.fetchMovieDetails(imdb);
     showItemDetailsDialog.value = true;
 };
-
-const hideItemDetails = () => {
-    showItemDetailsDialog.value = false;
-};
 </script>
 
 <style lang="scss" scoped>
-.v-btn--bottom-right {
+.btn-float {
     position: fixed;
     bottom: 16px;
     right: 16px;
-    z-index: 1000; /* Ensure it's on top of other elements */
+    z-index: 1000;
 }
 </style>

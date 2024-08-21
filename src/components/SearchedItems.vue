@@ -23,14 +23,34 @@
             </v-card>
         </v-col>
     </v-row>
+
+    <!-- Item Details Dialog -->
+    <search-item-details-dialog
+        :show-item-details-dialog="showItemDetailsDialog"
+        @close-dialog="() => (showItemDetailsDialog = false)"
+    />
 </template>
 
 <script setup>
 import { useMovieStore } from "@/stores/movieStore";
+
 const movieStore = useMovieStore();
+let showItemDetailsDialog = ref(false);
+
+const props = defineProps({
+    isXs: {
+        type: Boolean,
+        required: true,
+        default: false,
+    },
+});
 
 const fetchDetails = (imdb) => {
     movieStore.fetchMovieDetails(imdb);
+
+    if (props.isXs) {
+        showItemDetailsDialog.value = true;
+    }
 };
 </script>
 
