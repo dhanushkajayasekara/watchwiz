@@ -1,13 +1,13 @@
 <template>
-    <span v-if="totalCount" class="text-center text-medium-emphasis">
+    <span
+        v-if="totalCount"
+        class="text-center text-medium-emphasis text-subtitle-2"
+    >
         Showing
         <v-chip color="success" label>
             {{ currentCount }} / {{ totalCount }}
         </v-chip>
-        <!-- /
-        <v-chip size="x-small" color="info" class="ma-2" label>
-            {{ totalCount }}
-        </v-chip> -->
+
         results.
     </span>
 </template>

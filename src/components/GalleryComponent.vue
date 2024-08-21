@@ -31,20 +31,10 @@
     </v-row>
 
     <!-- Item Details Dialog -->
-    <v-dialog v-model="showItemDetailsDialog" width="auto" persistent>
-        <v-card class="pa-10" max-width="800" rounded="lg">
-            <searched-item-details />
-            <template v-slot:actions>
-                <v-btn
-                    class="ms-auto text-none mt-3"
-                    prepend-icon="mdi-close"
-                    variant="outlined"
-                    text="Close"
-                    @click="hideItemDetails()"
-                ></v-btn>
-            </template>
-        </v-card>
-    </v-dialog>
+    <search-item-details-dialog
+        :show-item-details-dialog="showItemDetailsDialog"
+        @close-dialog="() => (showItemDetailsDialog = false)"
+    />
 </template>
 
 <script setup>
@@ -69,9 +59,5 @@ const fetchDetails = (imdb) => {
     movieStore.fetchMovieDetails(imdb);
 
     showItemDetailsDialog.value = true;
-};
-
-const hideItemDetails = () => {
-    showItemDetailsDialog.value = false;
 };
 </script>

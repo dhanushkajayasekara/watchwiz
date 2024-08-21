@@ -1,5 +1,3 @@
-// Utilities
-import axios from "axios";
 import { defineStore } from "pinia";
 import { fetchFromOMDB } from "@/services/apiService";
 import { getWatchlist } from "@/services/watchlistService";
@@ -157,7 +155,7 @@ export const useMovieStore = defineStore("movieStore", {
 
             await this.handleAsyncOperation(async () => {
                 const watchlistMoviesPromises = [];
-                imdbList.forEach((imdb) => {
+                imdbList.reverse().forEach((imdb) => {
                     watchlistMoviesPromises.push(
                         fetchFromOMDB({
                             i: imdb,

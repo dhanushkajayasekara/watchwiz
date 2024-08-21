@@ -21,6 +21,7 @@
                                 clearable
                                 @click:clear="() => (inputTitle = null)"
                                 v-model="inputTitle"
+                                autofocus
                             />
                         </v-col>
                         <v-col
@@ -112,22 +113,14 @@
 
         <!-- Search results and details -->
         <v-row v-if="movieStore.searchedMovies.length">
-            <v-col
-                cols="3"
-                sm="3"
-                md="4"
-                lg="5"
-                class="col-content border-e-lg pr-6"
-            >
+            <v-col cols="12" sm="3" md="4" lg="5" class="border-e-lg pr-6">
                 <!-- Search results -->
                 <v-row>
                     <v-col
                         cols="12"
                         style="max-height: 500px; overflow-y: auto"
                     >
-                        <searched-items
-                            :movie-list="movieStore.searchedMovies"
-                        />
+                        <searched-items :isXs="isXs" />
                     </v-col>
                     <v-col
                         cols="12"
@@ -147,14 +140,14 @@
                         </v-btn>
 
                         <results-count
-                            class="mt-4"
+                            class="d-none d-sm-block mt-4"
                             :currentCount="movieStore.searchedMovies.length"
                             :totalCount="movieStore.searchedMoviesCount"
                         />
                     </v-col>
                 </v-row>
             </v-col>
-            <v-col cols="8" sm="9" md="8" lg="7" class="col-content pl-6">
+            <v-col cols="9" sm="9" md="8" lg="7" class="pl-6 d-none d-sm-block">
                 <!-- Details -->
                 <searched-item-details />
             </v-col>
@@ -163,9 +156,11 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { computed, ref } from "vue";
 import { useMovieStore } from "@/stores/movieStore";
+import { useDisplay } from "vuetify";
 
+const { name } = useDisplay();
 const inputTitle = ref("");
 const inputSearchType = ref("");
 const currentYear = new Date().getFullYear();
@@ -209,12 +204,12 @@ const loadMoreMovies = () => {
 };
 
 onMounted(() => {
-    console.log(1111111111);
-
     movieStore.movieDetails = {};
     movieStore.searchedMoviesCount = 0;
     movieStore.searchedMovies = [];
 });
+
+const isXs = computed(() => (name.value == "xs" ? true : false));
 </script>
 
 <style lang="scss" scoped></style>

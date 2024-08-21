@@ -10,7 +10,10 @@
             </v-col>
             <v-col cols="12" sm="8" class="d-flex flex-column">
                 <v-row>
-                    <v-col cols="12" align="end">
+                    <v-col
+                        cols="12"
+                        class="d-flex justify-center justify-sm-end"
+                    >
                         <v-btn
                             class="text-none"
                             :prepend-icon="
