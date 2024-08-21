@@ -19,19 +19,17 @@
                 <v-icon>mdi-magnify</v-icon>
             </v-btn>
 
-            <v-btn icon @click="() => router.push('/interested-movies')">
-                <v-icon color="success">mdi-bookmark</v-icon>
+            <v-btn icon @click="() => router.push('/watchlist')">
+                <v-icon>mdi-eye-outline</v-icon>
             </v-btn>
         </v-toolbar>
     </v-app-bar>
 </template>
 
 <script setup>
-import { ref } from "vue";
-import { useRouter, useRoute } from "vue-router";
+import { useRouter } from "vue-router";
 
 const router = useRouter();
-const route = useRoute();
 </script>
 
 <style lang="scss" scoped>

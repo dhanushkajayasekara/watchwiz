@@ -1,8 +1,8 @@
 <template>
     <v-container>
         <!-- Search Card -->
-        <v-row>
-            <v-col cols="12" md="12">
+        <v-row justify="center" align="end">
+            <v-col cols="12" lg="10">
                 <v-card
                     variant="outlined"
                     class="pa-6 rounded-lg"
@@ -57,8 +57,8 @@
                                     <v-range-slider
                                         v-if="isYear"
                                         v-model="inputYearRange"
-                                        :max="2030"
                                         :min="1950"
+                                        :max="endYear"
                                         :step="10"
                                         hide-details
                                     >
@@ -91,9 +91,16 @@
                         </v-col>
                     </v-row>
                 </v-card>
+
+                <v-divider
+                    color="info"
+                    class="my-10 border-opacity-75"
+                    v-if="movieStore.searchedMovies.length"
+                />
             </v-col>
         </v-row>
 
+        <!-- Results count -->
         <v-row>
             <v-col cols="12">
                 <results-count
@@ -102,6 +109,8 @@
                 />
             </v-col>
         </v-row>
+
+        <!-- Search results and details -->
         <v-row v-if="movieStore.searchedMovies.length">
             <v-col
                 cols="3"
@@ -110,6 +119,7 @@
                 lg="5"
                 class="col-content border-e-lg pr-6"
             >
+                <!-- Search results -->
                 <v-row>
                     <v-col
                         cols="12"
@@ -145,6 +155,7 @@
                 </v-row>
             </v-col>
             <v-col cols="8" sm="9" md="8" lg="7" class="col-content pl-6">
+                <!-- Details -->
                 <searched-item-details />
             </v-col>
         </v-row>
@@ -157,7 +168,9 @@ import { useMovieStore } from "@/stores/movieStore";
 
 const inputTitle = ref("");
 const inputSearchType = ref("");
-const inputYearRange = ref([2020, 2030]);
+const currentYear = new Date().getFullYear();
+const endYear = ref(Math.ceil(currentYear / 10) * 10);
+const inputYearRange = ref([2020, endYear.value]);
 const isYear = ref(false);
 const movieStore = useMovieStore();
 let currentPage = ref(1);
@@ -196,8 +209,11 @@ const loadMoreMovies = () => {
 };
 
 onMounted(() => {
+    console.log(1111111111);
+
     movieStore.movieDetails = {};
     movieStore.searchedMoviesCount = 0;
+    movieStore.searchedMovies = [];
 });
 </script>
 

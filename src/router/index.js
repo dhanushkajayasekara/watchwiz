@@ -24,9 +24,9 @@ const routes = [
         component: () => import("@/pages/SearchPage.vue"),
     },
     {
-        path: "/interested-movies",
-        name: "interested-movies",
-        component: () => import("@/pages/InterestedMoviesPage.vue"),
+        path: "/watchlist",
+        name: "watchlist",
+        component: () => import("@/pages/WatchListPage.vue"),
     },
     // Catch-all route for 404 Not Found
     {
