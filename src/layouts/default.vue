@@ -4,7 +4,12 @@
         <v-container>
             <v-row justify="center">
                 <v-col cols="12" lg="10">
-                    <v-alert
+                    <alert :error-message="movieStore.error" />
+                    <alert
+                        :error-message="movieStore.errorInfo"
+                        alert-type="warning"
+                    />
+                    <!-- <v-alert
                         rounded="lg"
                         class="mt-16 py-6"
                         :text="movieStore.error"
@@ -25,7 +30,7 @@
                         variant="tonal"
                         border="start"
                         closable
-                    ></v-alert>
+                    ></v-alert> -->
                 </v-col>
             </v-row>
         </v-container>

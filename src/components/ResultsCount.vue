@@ -1,15 +1,18 @@
 <template>
-    <span
+    <p
         v-if="totalCount"
         class="text-center text-medium-emphasis text-subtitle-2"
+        aria-live="polite"
     >
         Showing
-        <v-chip color="success" label>
-            {{ currentCount }} / {{ totalCount }}
-        </v-chip>
+        <strong>
+            <v-chip color="success" label>
+                {{ currentCount }} / {{ totalCount }}
+            </v-chip>
+        </strong>
 
         results.
-    </span>
+    </p>
 </template>
 
 <script setup>

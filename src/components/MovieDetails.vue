@@ -1,15 +1,23 @@
 <template>
-    <div v-if="movieStore.movieDetails.imdbID">
+    <article
+        v-if="movieStore.movieDetails.imdbID"
+        aria-labelledby="dialog-title"
+    >
         <v-row>
+            <!-- Movie Poster -->
             <v-col cols="12" sm="4" class="d-flex align-stretch">
                 <v-img
                     :src="movieStore.movieDetails.Poster"
+                    :alt="`${movieStore.movieDetails.Title} movie poster`"
                     rounded="lg"
                     max-height="400"
                 ></v-img>
             </v-col>
+
+            <!-- Movie Details -->
             <v-col cols="12" sm="8" class="d-flex flex-column">
                 <v-row>
+                    <!-- Watchlist Button -->
                     <v-col
                         cols="12"
                         class="d-flex justify-center justify-sm-end"
@@ -24,13 +32,20 @@
                             :variant="isWatchlist ? 'tonal' : 'outlined'"
                             :color="isWatchlist ? 'success' : 'default'"
                             @click="toggleWatch"
+                            aria-label="Toggle watchlist for {{ movieStore.movieDetails.Title }}"
                         >
                             {{ !isWatchlist ? "Add to " : "" }}Watchlist
                         </v-btn>
                     </v-col>
+
+                    <!-- Movie Title -->
                     <v-col cols="12">
-                        <h1>{{ movieStore.movieDetails.Title }}</h1>
+                        <h2 id="dialog-title">
+                            {{ movieStore.movieDetails.Title }}
+                        </h2>
                     </v-col>
+
+                    <!-- Movie Meta Info -->
                     <v-col cols="12">
                         <v-chip color="default" size="small">
                             {{ movieStore.movieDetails.Runtime }}
@@ -40,6 +55,7 @@
                         </v-chip>
                         {{ movieStore.movieDetails.Genre }}
                     </v-col>
+
                     <v-col cols="12">
                         <v-chip color="info" size="small"> Directed By </v-chip>
                         {{ movieStore.movieDetails.Director }}
@@ -55,35 +71,49 @@
                 </v-row>
             </v-col>
         </v-row>
+
+        <!-- Separator -->
         <hr class="my-3" />
+
+        <!-- Movie Plot -->
         <v-row>
             <v-col cols="12">
-                <p>
-                    {{ movieStore.movieDetails.Plot }}
-                </p>
+                <section aria-labelledby="plot-title">
+                    <h3 id="plot-title" class="mb-2">Plot</h3>
+
+                    <p>
+                        {{ movieStore.movieDetails.Plot }}
+                    </p>
+                </section>
             </v-col>
         </v-row>
+
         <hr class="my-3" />
-        <v-row>
-            <v-col
-                cols="12"
-                sm="4"
-                v-for="rating in movieStore.movieDetails.Ratings"
-                :key="rating.Source"
-            >
-                <v-card
-                    variant="outlined"
-                    class="mx-auto"
-                    color="success"
-                    :subtitle="rating.Source"
-                    :title="rating.Value"
-                    hover
-                    rounded="lg"
+
+        <!-- Movie Ratings -->
+        <section aria-labelledby="ratings-title">
+            <h3 id="ratings-title" class="mb-2">Ratings</h3>
+            <v-row>
+                <v-col
+                    cols="12"
+                    sm="4"
+                    v-for="rating in movieStore.movieDetails.Ratings"
+                    :key="rating.Source"
                 >
-                </v-card>
-            </v-col>
-        </v-row>
-    </div>
+                    <v-card
+                        variant="outlined"
+                        class="mx-auto"
+                        color="success"
+                        :subtitle="rating.Source"
+                        :title="rating.Value"
+                        hover
+                        rounded="lg"
+                    >
+                    </v-card>
+                </v-col>
+            </v-row>
+        </section>
+    </article>
 </template>
 
 <script setup>

@@ -84,26 +84,55 @@ export const useMovieStore = defineStore("movieStore", {
 
             await this.handleAsyncOperation(async () => {
                 const yearPromises = [];
+
                 for (let year = startYear; year <= endYear; year++) {
                     yearPromises.push(
                         fetchFromOMDB({
                             s: title,
                             type: type,
                             y: year,
-                        })
+                        }).catch((error) => ({
+                            error: true,
+                            message: error.message || "Unknown error",
+                            year,
+                        }))
                     );
                 }
 
                 const responses = await Promise.all(yearPromises);
 
-                responses.forEach((response) => {
-                    if (response.data.Response === "True") {
-                        this.allMoviesByYear.push(...response.data.Search);
+                for (const response of responses) {
+                    if (response.error) {
+                        console.warn(
+                            `Error fetching movies for year ${response.year}: ${response.message}`
+                        );
+                        continue;
                     }
-                });
+
+                    if (response.data.Response === "False") {
+                        if (response.data.Error === "Too many results.") {
+                            this.errorInfo =
+                                "Too many results. Try a more specific search term.";
+                            return;
+                        }
+
+                        if (response.data.Error !== "Movie not found!") {
+                            console.warn(`OMDB Error: ${response.data.Error}`);
+                        }
+                        continue;
+                    }
+
+                    this.allMoviesByYear.push(...response.data.Search);
+                }
 
                 this.searchedMoviesCount = this.allMoviesByYear.length;
-                this.updateMoviesForPage(currentPage);
+
+                if (this.searchedMoviesCount) {
+                    this.updateMoviesForPage(currentPage);
+                } else {
+                    this.errorInfo =
+                        "No movies found for the given search criteria.";
+                }
             });
         },
         async fetchMovieDetails(imdb) {
@@ -124,6 +153,8 @@ export const useMovieStore = defineStore("movieStore", {
             });
         },
         selectFirstMovie() {
+            this.movieDetails = {};
+
             if (Object.keys(this.movieDetails).length === 0) {
                 this.fetchMovieDetails(this.searchedMovies[0].imdbID);
             }
