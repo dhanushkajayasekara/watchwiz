@@ -5,10 +5,12 @@
                 title="Popular Movies"
                 :movie-list="movieStore.popularMovies"
             />
+
             <v-divider
                 class="border-opacity-50 mb-10 mx-16"
                 color="info"
             ></v-divider>
+
             <gallery-component
                 title="Popular Series"
                 :movie-list="movieStore.popularSeries"
