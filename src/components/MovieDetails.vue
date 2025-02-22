@@ -117,7 +117,7 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, watch, nextTick } from "vue";
 import { useMovieStore } from "@/stores/movieStore";
 import {
     addToWatchlist,
@@ -128,17 +128,15 @@ import {
 const movieStore = useMovieStore();
 const isWatchlist = ref(false);
 
-onMounted(() => {
-    setTimeout(() => {
-        isWatchlist.value = isMovieInWatchlist(movieStore.movieDetails.imdbID);
-    }, 200);
-});
-
 watch(
-    () => movieStore.movieDetails,
-    (newCount, oldCount) => {
-        isWatchlist.value = isMovieInWatchlist(movieStore.movieDetails.imdbID);
-    }
+    () => movieStore.movieDetails.imdbID,
+    async (newImdbID) => {
+        if (newImdbID) {
+            await nextTick();
+            isWatchlist.value = isMovieInWatchlist(newImdbID);
+        }
+    },
+    { immediate: true }
 );
 
 const toggleWatch = () => {
