@@ -1,11 +1,11 @@
 <template>
     <v-container>
         <!-- Page Title -->
-        <header class="mb-10">
-            <h1 class="text-h4 font-weight-bold text-center mb-6">
-                Search Movies / TV Series
-            </h1>
-        </header>
+        <!-- <header class="mb-10"> -->
+        <h1 class="text-h4 font-weight-bold text-center mb-16">
+            Search Movies / TV Series
+        </h1>
+        <!-- </header> -->
 
         <!-- Search Section -->
         <section>
