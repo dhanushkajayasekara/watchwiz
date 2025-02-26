@@ -24,7 +24,7 @@ const props = defineProps({
     },
     errorMessage: {
         type: String,
-        required: true,
+        default: null,
     },
 });
 </script>

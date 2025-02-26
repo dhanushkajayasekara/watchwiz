@@ -1,6 +1,5 @@
 import { defineStore } from "pinia";
 import { fetchFromOMDB } from "@/services/apiService";
-import { getWatchlist } from "@/services/watchlistService";
 
 export const useMovieStore = defineStore("movieStore", {
     state: () => ({
@@ -15,7 +14,16 @@ export const useMovieStore = defineStore("movieStore", {
         allMoviesByYear: [],
         watchlistMovies: [],
         watchlistMoviesCount: 0,
+        watchlist: JSON.parse(localStorage.getItem("movieWatchlist")) || [], // Load from localStorage
     }),
+    getters: {
+        isInWatchlist: (state) => (imdbID) => state.watchlist.includes(imdbID),
+        getWatchlistMovies: (state) => {
+            return state.watchlistMovies.filter((movie) =>
+                state.watchlist.includes(movie.imdbID)
+            );
+        },
+    },
     actions: {
         async handleAsyncOperation(asyncFn) {
             try {
@@ -182,7 +190,7 @@ export const useMovieStore = defineStore("movieStore", {
             this.reset();
             this.watchlistMovies = [];
             this.watchlistMoviesCount = 0;
-            let imdbList = getWatchlist();
+            let imdbList = this.watchlist;
 
             await this.handleAsyncOperation(async () => {
                 const watchlistMoviesPromises = [];
@@ -202,8 +210,25 @@ export const useMovieStore = defineStore("movieStore", {
                     }
                 });
 
-                this.searchedMoviesCount = imdbList.length;
+                this.watchlistMoviesCount = this.watchlistMovies.length;
             });
+        },
+
+        addToWatchlist(imdbID) {
+            if (!this.watchlist.includes(imdbID)) {
+                this.watchlist.push(imdbID);
+                localStorage.setItem(
+                    "movieWatchlist",
+                    JSON.stringify(this.watchlist)
+                );
+            }
+        },
+        removeFromWatchlist(imdbID) {
+            this.watchlist = this.watchlist.filter((id) => id !== imdbID);
+            localStorage.setItem(
+                "movieWatchlist",
+                JSON.stringify(this.watchlist)
+            );
         },
     },
 });
