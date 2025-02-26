@@ -14,18 +14,17 @@ export const useMovieStore = defineStore("movieStore", {
         allMoviesByYear: [],
         watchlistMovies: [],
         watchlistMoviesCount: 0,
-        watchlist: JSON.parse(localStorage.getItem("movieWatchlist")) || [], // Load from localStorage
+        watchlist: JSON.parse(localStorage.getItem("movieWatchlist")) || [],
     }),
     getters: {
         isInWatchlist: (state) => (imdbID) => state.watchlist.includes(imdbID),
-        getWatchlistMovies: (state) => {
-            return state.watchlistMovies.filter((movie) =>
-                state.watchlist.includes(movie.imdbID)
-            );
-        },
+        getWatchlistMovies: (state) => state.watchlistMovies,
     },
     actions: {
         async handleAsyncOperation(asyncFn) {
+            this.loading = true;
+            this.error = null;
+
             try {
                 return await asyncFn();
             } catch (error) {
@@ -68,11 +67,10 @@ export const useMovieStore = defineStore("movieStore", {
                 });
 
                 if (response.data.Response === "True") {
-                    if (currentPage == 1) {
-                        this.searchedMovies = response.data.Search;
-                    } else {
-                        this.searchedMovies.push(...response.data.Search);
-                    }
+                    this.searchedMovies =
+                        currentPage === 1
+                            ? response.data.Search
+                            : [...this.searchedMovies, ...response.data.Search];
 
                     this.selectFirstMovie();
 

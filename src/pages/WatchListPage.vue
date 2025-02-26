@@ -1,7 +1,7 @@
 <template>
     <v-container>
         <!-- Page Title -->
-        <header class="mb-10 d-flex justify-center align-center">
+        <section class="mb-16 d-flex justify-center align-center">
             <h1 class="text-h4 font-weight-bold text-center">Watchlist</h1>
             <v-btn
                 size="small"
@@ -12,7 +12,7 @@
             >
                 <v-icon>mdi-refresh</v-icon>
             </v-btn>
-        </header>
+        </section>
 
         <v-row justify="center" align="end">
             <v-col cols="12" lg="8">
