@@ -1,25 +1,39 @@
 <template>
-    <v-app-bar color="surface" dark height="80" class="pe-3">
-        <v-toolbar color="surface">
+    <v-app-bar color="surface" dark height="80" class="pe-3" tag="header">
+        <v-toolbar color="surface" tag="nav">
             <v-toolbar-title>
-                <v-img
-                    src="@/assets/logo.png"
-                    alt="Logo"
-                    contain
-                    height="50"
-                    width="auto"
+                <v-btn
+                    size="x-large"
+                    variant="plain"
+                    aria-label="Go to Home"
+                    :ripple="false"
                     @click="() => router.push('/')"
-                    class="cursor-pointer"
-                />
+                >
+                    <v-img
+                        src="@/assets/logo.png"
+                        alt="WatchWiz Logo"
+                        contain
+                        :height="xs ? 30 : 50"
+                        width="auto"
+                    />
+                </v-btn>
             </v-toolbar-title>
 
             <v-spacer></v-spacer>
 
-            <v-btn icon @click="() => router.push('/search')">
+            <v-btn
+                icon
+                @click="() => router.push('/search')"
+                aria-label="Search"
+            >
                 <v-icon>mdi-magnify</v-icon>
             </v-btn>
 
-            <v-btn icon @click="() => router.push('/watchlist')">
+            <v-btn
+                icon
+                @click="() => router.push('/watchlist')"
+                aria-label="Watchlist"
+            >
                 <v-icon>mdi-eye-outline</v-icon>
             </v-btn>
         </v-toolbar>
@@ -28,8 +42,10 @@
 
 <script setup>
 import { useRouter } from "vue-router";
+import { useDisplay } from "vuetify";
 
 const router = useRouter();
+const { xs } = useDisplay();
 </script>
 
 <style lang="scss" scoped>

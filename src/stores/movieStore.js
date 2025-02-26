@@ -1,6 +1,5 @@
 import { defineStore } from "pinia";
 import { fetchFromOMDB } from "@/services/apiService";
-import { getWatchlist } from "@/services/watchlistService";
 
 export const useMovieStore = defineStore("movieStore", {
     state: () => ({
@@ -15,9 +14,17 @@ export const useMovieStore = defineStore("movieStore", {
         allMoviesByYear: [],
         watchlistMovies: [],
         watchlistMoviesCount: 0,
+        watchlist: JSON.parse(localStorage.getItem("movieWatchlist")) || [],
     }),
+    getters: {
+        isInWatchlist: (state) => (imdbID) => state.watchlist.includes(imdbID),
+        getWatchlistMovies: (state) => state.watchlistMovies,
+    },
     actions: {
         async handleAsyncOperation(asyncFn) {
+            this.loading = true;
+            this.error = null;
+
             try {
                 return await asyncFn();
             } catch (error) {
@@ -60,11 +67,10 @@ export const useMovieStore = defineStore("movieStore", {
                 });
 
                 if (response.data.Response === "True") {
-                    if (currentPage == 1) {
-                        this.searchedMovies = response.data.Search;
-                    } else {
-                        this.searchedMovies.push(...response.data.Search);
-                    }
+                    this.searchedMovies =
+                        currentPage === 1
+                            ? response.data.Search
+                            : [...this.searchedMovies, ...response.data.Search];
 
                     this.selectFirstMovie();
 
@@ -84,26 +90,55 @@ export const useMovieStore = defineStore("movieStore", {
 
             await this.handleAsyncOperation(async () => {
                 const yearPromises = [];
+
                 for (let year = startYear; year <= endYear; year++) {
                     yearPromises.push(
                         fetchFromOMDB({
                             s: title,
                             type: type,
                             y: year,
-                        })
+                        }).catch((error) => ({
+                            error: true,
+                            message: error.message || "Unknown error",
+                            year,
+                        }))
                     );
                 }
 
                 const responses = await Promise.all(yearPromises);
 
-                responses.forEach((response) => {
-                    if (response.data.Response === "True") {
-                        this.allMoviesByYear.push(...response.data.Search);
+                for (const response of responses) {
+                    if (response.error) {
+                        console.warn(
+                            `Error fetching movies for year ${response.year}: ${response.message}`
+                        );
+                        continue;
                     }
-                });
+
+                    if (response.data.Response === "False") {
+                        if (response.data.Error === "Too many results.") {
+                            this.errorInfo =
+                                "Too many results. Try a more specific search term.";
+                            return;
+                        }
+
+                        if (response.data.Error !== "Movie not found!") {
+                            console.warn(`OMDB Error: ${response.data.Error}`);
+                        }
+                        continue;
+                    }
+
+                    this.allMoviesByYear.push(...response.data.Search);
+                }
 
                 this.searchedMoviesCount = this.allMoviesByYear.length;
-                this.updateMoviesForPage(currentPage);
+
+                if (this.searchedMoviesCount) {
+                    this.updateMoviesForPage(currentPage);
+                } else {
+                    this.errorInfo =
+                        "No movies found for the given search criteria.";
+                }
             });
         },
         async fetchMovieDetails(imdb) {
@@ -124,6 +159,8 @@ export const useMovieStore = defineStore("movieStore", {
             });
         },
         selectFirstMovie() {
+            this.movieDetails = {};
+
             if (Object.keys(this.movieDetails).length === 0) {
                 this.fetchMovieDetails(this.searchedMovies[0].imdbID);
             }
@@ -151,7 +188,7 @@ export const useMovieStore = defineStore("movieStore", {
             this.reset();
             this.watchlistMovies = [];
             this.watchlistMoviesCount = 0;
-            let imdbList = getWatchlist();
+            let imdbList = this.watchlist;
 
             await this.handleAsyncOperation(async () => {
                 const watchlistMoviesPromises = [];
@@ -171,8 +208,25 @@ export const useMovieStore = defineStore("movieStore", {
                     }
                 });
 
-                this.searchedMoviesCount = imdbList.length;
+                this.watchlistMoviesCount = this.watchlistMovies.length;
             });
+        },
+
+        addToWatchlist(imdbID) {
+            if (!this.watchlist.includes(imdbID)) {
+                this.watchlist.push(imdbID);
+                localStorage.setItem(
+                    "movieWatchlist",
+                    JSON.stringify(this.watchlist)
+                );
+            }
+        },
+        removeFromWatchlist(imdbID) {
+            this.watchlist = this.watchlist.filter((id) => id !== imdbID);
+            localStorage.setItem(
+                "movieWatchlist",
+                JSON.stringify(this.watchlist)
+            );
         },
     },
 });
