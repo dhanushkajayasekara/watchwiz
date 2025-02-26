@@ -25,16 +25,16 @@
                         <v-btn
                             class="text-none"
                             :prepend-icon="
-                                isWatchlist
+                                isInWatchlist
                                     ? 'mdi-eye-outline'
                                     : 'mdi-eye-off-outline'
                             "
-                            :variant="isWatchlist ? 'tonal' : 'outlined'"
-                            :color="isWatchlist ? 'success' : 'default'"
+                            :variant="isInWatchlist ? 'tonal' : 'outlined'"
+                            :color="isInWatchlist ? 'success' : 'default'"
                             @click="toggleWatch"
                             aria-label="Toggle watchlist for {{ movieStore.movieDetails.Title }}"
                         >
-                            {{ !isWatchlist ? "Add to " : "" }}Watchlist
+                            {{ !isInWatchlist ? "Add to " : "" }}Watchlist
                         </v-btn>
                     </v-col>
 
@@ -117,38 +117,20 @@
 </template>
 
 <script setup>
-import { ref, watch, nextTick } from "vue";
+import { computed } from "vue";
 import { useMovieStore } from "@/stores/movieStore";
-import {
-    addToWatchlist,
-    removeFromWatchlist,
-    isMovieInWatchlist,
-} from "@/services/watchlistService";
 
 const movieStore = useMovieStore();
-const isWatchlist = ref(false);
-
-watch(
-    () => movieStore.movieDetails.imdbID,
-    async (newImdbID) => {
-        if (newImdbID) {
-            await nextTick();
-            isWatchlist.value = isMovieInWatchlist(newImdbID);
-        }
-    },
-    { immediate: true }
+const isInWatchlist = computed(() =>
+    movieStore.isInWatchlist(movieStore.movieDetails.imdbID)
 );
 
 const toggleWatch = () => {
-    if (isWatchlist.value) {
-        removeFromWatchlist(movieStore.movieDetails.imdbID);
-        movieStore.watchlistMovies = movieStore.watchlistMovies.filter(
-            (movie) => movie.imdbID !== movieStore.movieDetails.imdbID
-        );
+    if (isInWatchlist.value) {
+        movieStore.removeFromWatchlist(movieStore.movieDetails.imdbID);
     } else {
-        addToWatchlist(movieStore.movieDetails.imdbID);
+        movieStore.addToWatchlist(movieStore.movieDetails.imdbID);
     }
-    isWatchlist.value = !isWatchlist.value;
 };
 </script>
 

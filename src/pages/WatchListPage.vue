@@ -18,7 +18,7 @@
             <v-col cols="12" lg="8">
                 <v-row justify="center" align="end">
                     <v-col
-                        v-for="movie in movieStore.watchlistMovies"
+                        v-for="movie in watchlistMovies"
                         :key="movie.imdbID"
                         cols="12"
                         xs="6"
@@ -44,8 +44,10 @@
 
 <script setup>
 import { useMovieStore } from "@/stores/movieStore";
+import { computed } from "vue";
 
 const movieStore = useMovieStore();
+const watchlistMovies = computed(() => movieStore.getWatchlistMovies);
 
 onMounted(() => {
     movieStore.fetchWatchlistMovies();
